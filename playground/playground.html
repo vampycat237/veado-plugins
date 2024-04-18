@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+    <title>veadotube playground</title>
+    <link rel="stylesheet" type="text/css" href="https://vampycritters.neocities.org/style.css"/>
+</head>
+<body>
+    <style>
+        #content {
+            width: 50%;
+            text-align: center;
+        }
+
+        #playground {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-border {
+            border: 0.25rem solid var(--link);
+            margin-top: 0.5rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .pos-relative {
+            position: relative;
+        }
+
+        .border-badge {
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+        .border-badge.bottom {
+            bottom: -0.7rem;
+        }
+        .border-badge.top {
+            top: -0.75rem;
+        }
+
+        .border-badge > i {
+            --outline-weight: 2px;
+            --outline-color: var(--link);
+            color: var(--card-bg);
+        }
+    </style>
+    <div class="row">
+        <div id="content" class="card">
+            <h1>vampys veadotube playground</h1>
+            <div id="playground">
+
+                <div id="config" class="gallery card card-border pos-relative">
+                    <div class="border-badge top">
+                        <span class="btn btn-primary">config</span>
+                    </div>
+
+                    <ul id="config-connection" class="gallery-item flat">
+                        <div class="row">
+                            <div id="config-connection-file" class="btn btn-subtle">
+                                <span class="btn btn-subtle">
+                                    <label for="instances-file"><i class="fa fa-floppy-disk"></i>load instances from <a href="https://veado.tube/help/docs/data-files/" class="pos-relative">veadotube data<span class="tooltip"> all files in /.veadotube/instances</span></a></label>
+                                    <input id="instances-file" type="file" />
+                                </span>
+                            </div>
+
+                            <div id="config-connection-manual" class="btn btn-subtle">
+                                <span class="btn btn-subtle" style="position:relative;">
+                                    <i class="fa fa-display"></i>
+                                    <label class="tooltip" for="window-title">veadotube window title</label>
+                                    <input id="window-title" class="btn btn-subtle" value="veadotube mini" />
+                                </span>
+                                <span class="btn btn-subtle" style="text-align:left;">
+                                    <i class="fa fa-server"></i>
+                                    <span style="position:relative;">
+                                        <label class="tooltip" for="host">websocket server address</label>
+                                        <input id="host" class="btn btn-subtle" inputmode="numeric" style="width:5em;" value="127.0.0.1" />
+                                    </span>
+                                    :
+                                    <span style="position:relative;">
+                                        <label class="tooltip" for="port">websocket server port</label>
+                                        <input id="port" class="btn btn-subtle" inputmode="numeric" style="width:3em;" value="52917" />
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <button id="connect" class="btn btn-primary" onclick="setupPlayground();"><i class="fa fa-play"></i> connect to veadotube</button>
+                        <button id="disconnect" class="btn btn-primary" onclick="chirpCan.close();"><i class="fa fa-stop"></i> close connection</button>
+                    </ul>
+                    <div class="border-badge bottom">
+                        <i class="fa fa-gear outline"></i>
+                    </div>
+                </div>
+
+                <div id="states" class="gallery card card-border pos-relative">
+                    <div class="border-badge top">
+                        <span class="btn btn-primary">states</span>
+                    </div>
+
+                    <div id="stateid" class="gallery-item">
+                        <img src="ADDLATER" />
+                        <span id="stateid-name">statedisplayname</span>
+                    </div>
+
+                    <div class="border-badge bottom">
+                        <i class="fa fa-image outline"></i>
+                        <span class="tooltip">states</span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!--hi fontawesome-->
+    <script src="https://kit.fontawesome.com/88fbd975a3.js" crossorigin="anonymous"></script>
+    <script src="playground.js"></script>
+</body>
+</html>
