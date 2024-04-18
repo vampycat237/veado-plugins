@@ -57,7 +57,7 @@
 
                     <ul id="config-connection" class="gallery-item flat">
                         <div class="row">
-                            <div id="config-connection-file" class="btn btn-subtle">
+                            <div id="config-connection-file" class="btn btn-subtle" style="display:none;">
                                 <span class="btn btn-subtle">
                                     <label for="instances-file"><i class="fa fa-floppy-disk"></i>load instances from <a href="https://veado.tube/help/docs/data-files/" class="pos-relative">veadotube data<span class="tooltip"> all files in /.veadotube/instances</span></a></label>
                                     <input id="instances-file" type="file" />
@@ -98,14 +98,13 @@
                         <span class="btn btn-primary">states</span>
                     </div>
 
-                    <div id="stateid" class="gallery-item">
+                    <div id="stateid" class="gallery-item" style="display:none;">
                         <img src="ADDLATER" />
-                        <span id="stateid-name">statedisplayname</span>
+                        <span>statedisplayname</span>
                     </div>
 
                     <div class="border-badge bottom">
                         <i class="fa fa-image outline"></i>
-                        <span class="tooltip">states</span>
                     </div>
                 </div>
                 
@@ -116,5 +115,7 @@
     <!--hi fontawesome-->
     <script src="https://kit.fontawesome.com/88fbd975a3.js" crossorigin="anonymous"></script>
     <script src="playground.js"></script>
+    <script src="chirpcan.js"></script>
+    <script src="veadostate.js"></script>
 </body>
 </html>
