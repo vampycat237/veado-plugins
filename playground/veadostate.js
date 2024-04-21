@@ -3,17 +3,13 @@
  * Construct by simply passing it id and name from JSON
  */
 class VeadoState {
-
-    static maxIndex = 0;
-
-    constructor(parsedJson) {
-        // record index information first and foremost
-        this.index = VeadoState.maxIndex;
-        VeadoState.maxIndex++;
+    constructor(payload, chirpCan) {
+        // remember parent
+        this.chirpCan = chirpCan;
 
         // grab stuff from the parsed json
-        this.id = parsedJson.id;
-        this.name = parsedJson.name;
+        this.id = payload.id;
+        this.name = payload.name;
 
         this.msg = {
             requestThumbnail : {
@@ -31,7 +27,7 @@ class VeadoState {
     }
 
     requestThumbnail() {
-        chirpCan.bleat(this.msg.requestThumbnail, VeadoState.thumbnailCallback, this.index);
+        this.chirpCan.bleat(this.msg.requestThumbnail, this, VeadoState.thumbnailCallback);
     }
 
     /**
@@ -51,11 +47,11 @@ class VeadoState {
     /**
      * Javascript lost track of "this", so we've got a weird little way to look ourself up instead.
      * @param {Event} event 
-     * @param {*} senderIndex 
+     * @param {VeadoState} sender
      */
-    static thumbnailCallback(event, senderIndex) {
+    static thumbnailCallback(event, sender) {
         const msg = ChirpCan.parseMessage(event)
-        ChirpCan.states[senderIndex].setThumbnail(msg.payload);
+        sender.setThumbnail(msg.payload);
     }
 
     /**
@@ -67,7 +63,7 @@ class VeadoState {
             <img src="${this.src}" />
             <span>${this.name}</span>
         </div>
-        `
+        `;
     }
 
     /**

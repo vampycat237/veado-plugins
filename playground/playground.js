@@ -29,7 +29,7 @@ class Playground {
     }
 
     static containers = {
-        states : document.getElementById("states")
+        states : document.getElementById("states-target")
     }
 
     static controls = {
@@ -41,7 +41,7 @@ class Playground {
         connect.style.display = "none";
         disconnect.style.display = "inline-block";
 
-        states.style.display = "block";
+        states.style.display = "flex";
     }
 
     static controlsOff() {
@@ -88,18 +88,27 @@ class Playground {
 
 
 // init stuff
-var chirpCan;
+var chirpCans = [];
 
 
 /**
  * Starts listening to Veadotube!
  */
 function start() {
-    chirpCan = Playground.parseInputs();
+    chirpCans[chirpCans.length] = Playground.parseInputs();
 }
 
-function stop() {
-    chirpCan.close();
+/**
+ * Stop the given ChirpCan's communications, or all chirpcans
+ * @param {number} index 
+ */
+function stop(index = null) {
+    if (index == null) {
+        for (var i = 0; i < chirpCans.length; i++) {
+            chirpCans[i].close();
+        }
+    }
+    else chirpCans[index].close();
 }
 
 function toggleInputMode() {
