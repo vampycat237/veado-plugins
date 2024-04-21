@@ -56,44 +56,68 @@
                     </div>
 
                     <ul id="config-connection" class="gallery-item flat">
-                        <div class="row">
-                            <div id="config-connection-file" class="btn btn-subtle" style="display:none;">
-                                <span class="btn btn-subtle">
-                                    <label for="instances-file"><i class="fa fa-floppy-disk"></i>load instances from <a href="https://veado.tube/help/docs/data-files/" class="pos-relative">veadotube data<span class="tooltip"> all files in /.veadotube/instances</span></a></label>
-                                    <input id="instances-file" type="file" />
-                                </span>
+
+                        <div class="btn btn-subtle">
+                            <button id="config-input-mode" onclick="toggleInputMode();">
+                                <i class="fa fa-arrows-rotate"></i>
+                                <span>input mode: </span>
+                                <span class="config-input-mode">manual</span>
+                                <span class="config-input-mode" style="display: none;">file</span>
+                            </button>
+                        </div>
+
+                        <div>
+                            <div id="config-connection-file" class="config-input-mode gallery-item" style="display:none;">
+                                <label for="instances-file">
+                                    <i class="fa fa-floppy-disk"></i>
+                                    load instances from <a href="https://veado.tube/help/docs/data-files/" class="pos-relative">veadotube data
+                                        <span class="tooltip"> all files in /.veadotube/instances</span>
+                                    </a>
+                                </label>
+                                <input id="instances-file" type="file" class="btn btn-subtle" />
                             </div>
 
-                            <div id="config-connection-manual" class="btn btn-subtle">
-                                <span class="btn btn-subtle" style="position:relative;">
-                                    <i class="fa fa-display"></i>
-                                    <label class="tooltip" for="window-title">veadotube window title</label>
+                            <div id="config-connection-manual" class="config-input-mode row">
+                                <div class="gallery-item">
+                                    <span>
+                                        <i class="fa fa-display"></i>
+                                        <label for="window-title">veadotube window title</label>
+                                    </span>
                                     <input id="window-title" class="btn btn-subtle" value="veadotube mini" />
-                                </span>
-                                <span class="btn btn-subtle" style="text-align:left;">
-                                    <i class="fa fa-server"></i>
-                                    <span style="position:relative;">
-                                        <label class="tooltip" for="host">websocket server address</label>
-                                        <input id="host" class="btn btn-subtle" inputmode="numeric" style="width:5em;" value="127.0.0.1" />
+                                </div>
+                                <div class="gallery-item" style="text-align:left;">
+                                    <span>
+                                        <i class="fa fa-server"></i>
+                                        websocket server address
                                     </span>
-                                    :
-                                    <span style="position:relative;">
-                                        <label class="tooltip" for="port">websocket server port</label>
-                                        <input id="port" class="btn btn-subtle" inputmode="numeric" style="width:3em;" value="52917" />
+                                    
+                                    <span class="">
+                                        <span style="position:relative;">
+                                            <label class="tooltip" for="host">server IP address</label>
+                                            <input id="host" class="btn btn-subtle" inputmode="numeric" style="width:6rem;" value="127.0.0.1" />
+                                        </span>
+                                        :
+                                        <span style="position:relative;">
+                                            <label class="tooltip" for="port">server port</label>
+                                            <input id="port" class="btn btn-subtle" inputmode="numeric" style="width:6rem;" value="" />
+                                        </span>
                                     </span>
-                                </span>
+                                </div>
                             </div>
                         </div>
 
-                        <button id="connect" class="btn btn-primary" onclick="setupPlayground();"><i class="fa fa-play"></i> connect to veadotube</button>
-                        <button id="disconnect" class="btn btn-primary" onclick="chirpCan.close();"><i class="fa fa-stop"></i> close connection</button>
+                        <div id="controls">
+                            <button id="connect" class="btn btn-primary controls-connection" onclick="start();"><i class="fa fa-play"></i> connect to veadotube</button>
+                            <button id="disconnect" class="btn btn-primary controls-connection" onclick="stop();" style="display:none;"><i class="fa fa-stop"></i> close connection</button>
+                        </div>
                     </ul>
+
                     <div class="border-badge bottom">
                         <i class="fa fa-gear outline"></i>
                     </div>
                 </div>
 
-                <div id="states" class="gallery card card-border pos-relative">
+                <div id="states" class="gallery card card-border pos-relative" style="display:none;">
                     <div class="border-badge top">
                         <span class="btn btn-primary">states</span>
                     </div>
@@ -114,8 +138,15 @@
 
     <!--hi fontawesome-->
     <script src="https://kit.fontawesome.com/88fbd975a3.js" crossorigin="anonymous"></script>
-    <script src="playground.js"></script>
-    <script src="chirpcan.js"></script>
+
+    <!--jquery ui (for toggling)-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+
+    <!--custom scripts-->
+    <script src="input.js"></script>
     <script src="veadostate.js"></script>
+    <script src="chirpcan.js"></script>
+    <script src="playground.js"></script>
 </body>
 </html>

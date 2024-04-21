@@ -20,10 +20,9 @@ class ChirpCan {
 
 
     // Gets config info from HTML and starts communication with the websocket server
-    constructor() {
-        this.host = Playground.inputs.host.value;
-        this.port = Playground.inputs.port.value;
-        this.windowtitle = Playground.inputs.windowTitle.value;
+    constructor(server, windowTitle) {
+        this.server = server;
+        this.windowTitle = windowTitle;
 
         console.log("connecting...");
 
@@ -31,25 +30,18 @@ class ChirpCan {
         this.openSocket();
     }
 
-    // Prefer file if possible
     openSocket() {
-        if (Playground.inputs.instancesFile.files.length > 0) this.openSocketFromFile();
-        else this.openSocketFromInputs();
+        this.websocket = new WebSocket("ws://" + this.server + "?n=" + this.windowTitle);
 
-        this.websocket.onopen = (event) => { this.socketInit(); }
-        this.websocket.onmessage = (event) => { console.log(event); }
-        this.websocket.onclose = (event) => { this.logSocketStatus(); }
-    }
-
-    // Spawns socket based on text inputs
-    openSocketFromInputs() {
-        this.websocket = new WebSocket("ws://" + this.host + ":" + this.port + "?n=" + this.windowTitle);
-    }
-
-    openSocketFromFile() {
-        Playground.inputs.instancesFile.files[0];
-
-        this.websocket = new WebSocket("ws://"+"dies");
+        this.websocket.onopen = (event) => { 
+            this.socketInit();
+            Playground.controlsOn();
+        };
+        this.websocket.onmessage = (event) => { console.log(event); };
+        this.websocket.onclose = (event) => { 
+            this.logSocketStatus(); 
+            Playground.controlsOff();
+        };
     }
 
     logSocketStatus() {
