@@ -3,13 +3,17 @@
  */
 class QueueItem {
     /**
-     * 
+     * Wraps the given data in a QueueItem.
      * @param {*} data 
      * @param {QueueItem} next opt
      */
     constructor(data) {
         this.data = data;
         this.next = null;
+    }
+
+    toString() {
+        return this.data.toString();
     }
 }
 
@@ -44,14 +48,24 @@ class Queue {
      * @param {*} data 
      */
     offer(data) {
-        if (this.size == 0) {
-            this.head = new QueueItem(data);
+        //console.log("Queue offered: "+data.toString());
+        const newItem = new QueueItem(data);
+
+        if (this.isEmpty()) { // size == 0: newItem should be the head now
+            this.head = newItem;
             this.tail = this.head;
         }
-        else {
-            this.tail.next = new QueueItem(data);
+        else if (this.size == 1) { // size == 1: newItem should be the head's .next
+            this.head.next = newItem;
+            this.tail = this.head.next;
         }
+        else {
+            this.tail.next = newItem;
+            this.tail = this.tail.next;
+        }
+
         this.size++;
+        //console.log("Queue's current head: "+this.head.toString());
     }
 
     /**
@@ -59,13 +73,28 @@ class Queue {
      * @returns {QueueItem.data|null}
      */
     poll() {
-        if (this.size == 0) return null;
+        //console.log("Queue's previous head: "+this.head.toString());
+        if (this.isEmpty()) return null;
         else {
             const oldHead = this.head;
             this.head = this.head.next;
 
             this.size--;
+
+            //if (!this.isEmpty()) console.log("Queue's new head: "+this.head.toString());
             return oldHead.data;
+        }
+    }
+
+    isEmpty() {
+        if (this.size == 0) return true;
+        else if (this.head == null) {
+            console.warn("Queue: Size is not 0, but head is null. This might cause issues. Queue object logged below");
+            console.log(this);
+            return false;
+        }
+        else {
+            return false;
         }
     }
 }

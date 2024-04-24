@@ -17,6 +17,11 @@
             flex-direction: column;
         }
 
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
         .card-border {
             border: 0.25rem solid var(--link);
             margin-top: 0.5rem;
@@ -122,7 +127,7 @@
                         <span class="btn btn-primary">states</span>
                     </div>
 
-                    <div id="states-target" class="gallery">
+                    <div id="states-target" class="gallery gallery-grid">
                         <div id="stateid" class="gallery-item" style="display:none;">
                             <img src="ADDLATER" />
                             <span>statedisplayname</span>

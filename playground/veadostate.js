@@ -26,6 +26,13 @@ class VeadoState {
         this.requestThumbnail();
     }
 
+    /**
+     * Identifies type, states name & id.
+     */
+    toString() {
+        return `VeadoState ${this.name} (id ${this.id})`;
+    }
+
     requestThumbnail() {
         this.chirpCan.bleat(this.msg.requestThumbnail, this, VeadoState.thumbnailCallback);
     }

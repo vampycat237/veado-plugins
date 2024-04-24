@@ -7,6 +7,21 @@ class Chirp {
         this.sender = sender;
         this.callback = callback;
     }
+
+    toString() {
+        var eventType;
+        if (this.message.event == "payload") {
+            eventType = `${this.message.event}:${this.message.payload.event}`;
+        }
+        else {
+            eventType = `${this.message.event}`;
+        }
+        return `
+    Chirp
+        from: ${this.sender}
+        event type: ${eventType}
+        `;
+    }
 }
 
 /**
@@ -55,6 +70,13 @@ class ChirpCan {
 
         //TODO: Try connecting to websocket
         this.openSocket();
+    }
+
+    /**
+     * Identifies type & what instance is being listened to.
+     */
+    toString() {
+        return `ChirpCan for server ${this.server}`;
     }
 
     openSocket() {
@@ -115,7 +137,7 @@ class ChirpCan {
         const msg = ChirpCan.parseMessage(event);
 
         for (var i = 0; i < msg.payload.states.length; i++) {
-            console.log(msg.payload.states[i]);
+            //console.log(msg.payload.states[i]);
             sender.states.push(new VeadoState(msg.payload.states[i], sender));
         }
     }
@@ -139,13 +161,24 @@ class ChirpCan {
      * Ensures that it can only be running ONCE so it's safe to call it multiple times.
      */
     #processMessageQueue() {
-        console.log("#processMessageQueue: "+this.processingMessageQueue);
+        //console.log("#processMessageQueue: "+this.processingMessageQueue);
         // quit if we're already running this, or if there's nothing to look at
-        if (this.messageQueue.size <= 0 || this.processingMessageQueue) return;
+        if (this.processingMessageQueue) {
+            console.log("#processMessageQueue: cancelled (queue already being processed)");
+
+            return;
+        }
+        else if (this.messageQueue.isEmpty()) {
+            clearInterval(this.messageIntervalId);
+            this.messageIntervalId = null;
+
+            console.log("#processMessageQueue: cancelled (queue is empty)");
+            return;
+        }
         // otherwise, indicate that we're processing so no other threads start.
         else this.processingMessageQueue = true;
 
-        console.log("#processMessageQueue: started processing message queue");
+        //console.log("#processMessageQueue: started");
 
         // begin looping the message queue
         if (!this.pendingMessage) {
@@ -158,7 +191,7 @@ class ChirpCan {
             const sender = chirp.sender;
             const message = chirp.message;
 
-            console.log(chirp);
+            console.log("#processMessageQueue: processing"+chirp.toString());
 
         
             this.websocket.onmessage = (event) => {
@@ -174,7 +207,7 @@ class ChirpCan {
 
         this.processingMessageQueue = false;
 
-        console.log("#processMessageQueue: paused processing message queue");
+        //console.log("#processMessageQueue: paused");
     }
 
     close() {
