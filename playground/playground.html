@@ -1,128 +1,143 @@
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
     <title>veadotube playground</title>
     <link rel="stylesheet" type="text/css" href="https://vampycritters.neocities.org/style.css"/>
+    <link rel="stylesheet" type="text/css" href="playground.css" />
 </head>
 <body>
-    <style>
-        #content {
-            width: 50%;
-            text-align: center;
-        }
-
-        #playground {
-            align-items: center;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .card-border {
-            border: 0.25rem solid var(--link);
-            margin-top: 0.5rem;
-            margin-bottom: 0.6rem;
-        }
-
-        .pos-relative {
-            position: relative;
-        }
-
-        .border-badge {
-            position: absolute;
-            left: 0;
-            right: 0;
-        }
-        .border-badge.bottom {
-            bottom: -0.7rem;
-        }
-        .border-badge.top {
-            top: -0.75rem;
-        }
-
-        .border-badge > i {
-            --outline-weight: 2px;
-            --outline-color: var(--link);
-            color: var(--card-bg);
-        }
-    </style>
     <div class="row">
         <div id="content" class="card">
             <h1>vampys veadotube playground</h1>
             <div id="playground">
-
-                <div id="config" class="gallery card card-border pos-relative">
-                    <div class="border-badge top">
-                        <span class="btn btn-primary">config</span>
-                    </div>
-
-                    <ul id="config-connection" class="gallery-item flat">
-
-                        <div class="btn btn-subtle">
-                            <button id="config-input-mode" onclick="toggleInputMode();">
-                                <i class="fa fa-arrows-rotate"></i>
-                                <span>input mode: </span>
-                                <span class="config-input-mode">manual</span>
-                                <span class="config-input-mode" style="display: none;">file</span>
-                            </button>
+                <div class="row">
+                    <div id="inspector" class="card card-border pos-relative inspectable">
+                        <div class="inspector-data">
+                            <input class="inspectable-bundle-title" value="inspector" />
+                            <div class="inspector-page">
+                                <input class="inspectable-title" value="inspector" />
+                                <input class="inspectable-desc" value="the inspector can give you more information about stuff on this page!<br />
+                                click the icon at the bottom of any window to learn more about the stuff in it." />
+                            </div>
                         </div>
 
+
+                        <div class="border-badge top">
+                            <span class="btn btn-primary">inspector</span>
+                        </div>
+
+                        <h2 id="itarget-title">inspector</h2>
+                        <p id="itarget-desc">
+                            the inspector can give you more information about stuff on this page!<br />
+                            click the icon at the bottom of any window to learn more about the stuff in it.
+                        </p>
                         <div>
-                            <div id="config-connection-file" class="config-input-mode gallery-item" style="display:none;">
-                                <label for="instances-file">
-                                    <i class="fa fa-floppy-disk"></i>
-                                    load instances from <a href="https://veado.tube/help/docs/data-files/" class="pos-relative">veadotube data
-                                        <span class="tooltip"> all files in /.veadotube/instances</span>
-                                    </a>
-                                </label>
-                                <input id="instances-file" type="file" class="btn btn-subtle" />
-                            </div>
+                            <a onclick="inspector.pagePrev()"><i class="fa fa-arrow-left"></i></a>
+                            <a onclick="inspector.pageNext()"><i class="fa fa-arrow-right"></i></a>
+                        </div>
 
-                            <div id="config-connection-manual" class="config-input-mode row">
-                                <div class="gallery-item">
-                                    <span>
-                                        <i class="fa fa-display"></i>
-                                        <label for="window-title">veadotube window title</label>
-                                    </span>
-                                    <input id="window-title" class="btn btn-subtle" value="veadotube mini" />
-                                </div>
-                                <div class="gallery-item" style="text-align:left;">
-                                    <span>
-                                        <i class="fa fa-server"></i>
-                                        websocket server address
-                                    </span>
-                                    
-                                    <span class="">
-                                        <span style="position:relative;">
-                                            <label class="tooltip" for="host">server IP address</label>
-                                            <input id="host" class="btn btn-subtle" inputmode="numeric" style="width:6rem;" value="127.0.0.1" />
-                                        </span>
-                                        :
-                                        <span style="position:relative;">
-                                            <label class="tooltip" for="port">server port</label>
-                                            <input id="port" class="btn btn-subtle" inputmode="numeric" style="width:6rem;" value="" />
-                                        </span>
-                                    </span>
-                                </div>
+                        <div class="border-badge bottom" onclick="inspector.loadInfo('inspector')">
+                            <i class="fa fa-magnifying-glass outline"></i>
+                        </div>
+                    </div>
+                    <div id="config" class="gallery card card-border pos-relative">
+                        <div class="inspector-data">
+                            <input class="inspectable-bundle-title" value="config" />
+                            <div class="inspector-page">
+                                <input class="inspectable-title" value="config" />
+                                <input class="inspectable-desc" value="The config menu is where you configure the playground so it can speak to veadotube!" />
+                            </div>
+                            <div class="inspector-page">
+                                <input class="inspectable-title" value="manual input" />
+                                <input class="inspectable-desc" value="For manual input mode, you'll reference veadotube's program settings.<br>This is probably ideal if you only have one veadotube instance open!<br><br>'window title': Input the value veadotube labels as 'window title' here.<br>'serving at': Input the value veadotube labels as 'serving at' here." />
+                            </div>
+                            <div class="inspector-page">
+                                <input class="inspectable-title" value="file input" />
+                                <input class="inspectable-desc" value="⚠️File input mode is not yet implemented⚠️<br>For file input mode, you'll select your data folder and the playground will load the information for all veadotube instances you have open.<br>When implemented, this will streamline the process for folks using multiple instances!" />
                             </div>
                         </div>
 
-                        <div id="controls">
-                            <button id="connect" class="btn btn-primary controls-connection" onclick="start();"><i class="fa fa-play"></i> connect to veadotube</button>
-                            <button id="disconnect" class="btn btn-primary controls-connection" onclick="stop();" style="display:none;"><i class="fa fa-stop"></i> close connection</button>
-                        </div>
-                    </ul>
 
-                    <div class="border-badge bottom">
-                        <i class="fa fa-gear outline"></i>
+                        <div class="border-badge top">
+                            <span class="btn btn-primary">config</span>
+                        </div>
+
+                        <ul id="config-connection" class="gallery-item flat">
+
+                            <div class="btn btn-subtle">
+                                <button id="config-input-mode" onclick="toggleInputMode();">
+                                    <i class="fa fa-arrows-rotate"></i>
+                                    <span>input mode: </span>
+                                    <span class="config-input-mode">manual</span>
+                                    <span class="config-input-mode" style="display: none;">file</span>
+                                </button>
+                            </div>
+
+                            <div>
+                                <div id="config-connection-file" class="config-input-mode gallery-item" style="display:none;">
+                                    <label for="instances-file">
+                                        <i class="fa fa-floppy-disk"></i>
+                                        <!--TODO: link should open in new tab-->
+                                        load instances from <a href="https://veado.tube/help/docs/data-files/" class="pos-relative">
+                                            veadotube data
+                                            <span class="tooltip"> all files in /.veadotube/instances</span>
+                                        </a>
+                                    </label>
+                                    <input id="instances-file" type="file" class="btn btn-subtle" />
+                                </div>
+
+                                <div id="config-connection-manual" class="config-input-mode row">
+                                    <div class="gallery-item">
+                                        <span>
+                                            <i class="fa fa-display"></i>
+                                            <label for="window-title">window title</label>
+                                        </span>
+                                        <input id="window-title" class="btn btn-subtle" value="veadotube mini" />
+                                    </div>
+                                    <div class="gallery-item" style="text-align:left;">
+                                        <span>
+                                            <i class="fa fa-server"></i>
+                                            serving at
+                                        </span>
+
+                                        <span class="">
+                                            <!--TODO: make this 1 field instead of two, since that's how veadotube presents it'-->
+                                            <span style="position:relative;">
+                                                <label class="tooltip" for="host">server IP address</label>
+                                                <input id="host" class="btn btn-subtle" inputmode="numeric" style="width:6rem;" value="127.0.0.1" />
+                                            </span>
+                                            :
+                                            <span style="position:relative;">
+                                                <label class="tooltip" for="port">server port</label>
+                                                <input id="port" class="btn btn-subtle" inputmode="numeric" style="width:6rem;" value="" />
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="controls">
+                                <button id="connect" class="btn btn-primary controls-connection" onclick="start();"><i class="fa fa-play"></i> connect to veadotube</button>
+                                <button id="disconnect" class="btn btn-primary controls-connection" onclick="stop();" style="display:none;"><i class="fa fa-stop"></i> close connection</button>
+                            </div>
+                        </ul>
+
+                        <div class="border-badge bottom" onclick="inspector.loadInfo('config')">
+                            <i class="fa fa-gear outline"></i>
+                        </div>
                     </div>
                 </div>
 
                 <div id="states" class="card card-border pos-relative" style="display:none;">
+                    <div class="inspector-data">
+                        <input class="inspectable-bundle-title" value="states" />
+                        <div class="inspector-page">
+                            <input class="inspectable-title" value="states" />
+                            <input class="inspectable-desc" value="This is where your states appear once the playground has connected to veadotube!<br>Each state should have its name and number as well as an image." />
+                        </div>
+                    </div>
+
+
                     <div class="border-badge top">
                         <span class="btn btn-primary">states</span>
                     </div>
@@ -134,11 +149,11 @@
                         </div>
                     </div>
 
-                    <div class="border-badge bottom">
+                    <div class="border-badge bottom" onclick="inspector.loadInfo('states')">
                         <i class="fa fa-image outline"></i>
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -151,10 +166,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
 
     <!--custom scripts-->
-    <script src="queue.js"></script>
-    <script src="input.js"></script>
-    <script src="veadostate.js"></script>
-    <script src="chirpcan.js"></script>
-    <script src="playground.js"></script>
+    <script src="queue.js"></script> <!--requires: n/a. implements a simple queue data structure.-->
+    <script src="input.js"></script> <!--requires: n/a. defines wrapper classes for inputs-->
+    <script src="inspector.js"></script> <!--requires: n/a. defines inspector functionality and related classes.-->
+    <script src="veadostate.js"></script> <!--uses chirpcan, but can be loaded first. JS class for veadotube states-->
+    <script src="chirpcan.js"></script> <!--requires: veadostate, queue. handles talking to veadotube-->
+    <script src="playground.js"></script> <!--requires: chirpcan, input, inspector. main script for the playground, ties everything together.-->
 </body>
 </html>

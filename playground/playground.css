@@ -1,0 +1,50 @@
+#content {
+    width: 50%;
+    text-align: center;
+}
+
+#playground {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.card-border {
+    border: 0.25rem solid var(--link);
+    margin-top: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.pos-relative {
+    position: relative;
+}
+
+.border-badge {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+    .border-badge.bottom {
+        bottom: -0.7rem;
+    }
+
+    .border-badge.top {
+        top: -0.75rem;
+    }
+
+    .border-badge > i {
+        --outline-weight: 2px;
+        --outline-color: var(--link);
+        color: var(--card-bg);
+    }
+
+/* These elements are only there for the code to read, and later display to the user!*/
+.inspector-data, .inspectable-bundle-title, .inspectable-title, .inspectable-desc {
+    display: none;
+}

@@ -66,7 +66,7 @@ class ChirpCan {
         this.windowTitle = windowTitle;
         this.index = index;
 
-        console.log("connecting...");
+        console.log("[ChirpCan] connecting...");
 
         //TODO: Try connecting to websocket
         this.openSocket();
@@ -110,16 +110,16 @@ class ChirpCan {
     logSocketStatus() {
         switch (this.websocket.readyState) {
             case 0:
-                console.log("connecting...");
+                console.log("[ChirpCan] connecting...");
                 break;
             case 1:
-                console.log("connected!");
+                console.log("[ChirpCan] connected!");
                 break;
             case 2:
-                console.log("closing connection...");
+                console.log("[ChirpCan] closing connection...");
                 break;
             case 3:
-                console.log("connection closed!");
+                console.log("[ChirpCan] connection closed!");
         }
     }
 
@@ -161,10 +161,9 @@ class ChirpCan {
      * Ensures that it can only be running ONCE so it's safe to call it multiple times.
      */
     #processMessageQueue() {
-        //console.log("#processMessageQueue: "+this.processingMessageQueue);
         // quit if we're already running this, or if there's nothing to look at
         if (this.processingMessageQueue) {
-            console.log("#processMessageQueue: cancelled (queue already being processed)");
+            console.log("[ChirpCan] ignored request to process message queue - queue already being processed");
 
             return;
         }
@@ -172,16 +171,17 @@ class ChirpCan {
             clearInterval(this.messageIntervalId);
             this.messageIntervalId = null;
 
-            console.log("#processMessageQueue: cancelled (queue is empty)");
+            console.log("[ChirpCan] stopped processing queue - queue is empty");
             return;
         }
-        // otherwise, indicate that we're processing so no other threads start.
+        
+        // indicate that we're processing so no other threads start
         else this.processingMessageQueue = true;
-
-        //console.log("#processMessageQueue: started");
 
         // begin looping the message queue
         if (!this.pendingMessage) {
+            console.log("[ChirpCan] recieved response, processing next message in queue...");
+
             clearInterval(this.messageIntervalId);
             this.messageIntervalId = null;
             
@@ -191,7 +191,7 @@ class ChirpCan {
             const sender = chirp.sender;
             const message = chirp.message;
 
-            console.log("#processMessageQueue: processing"+chirp.toString());
+            console.log("[ChirpCan] processing"+chirp.toString());
 
         
             this.websocket.onmessage = (event) => {
@@ -199,19 +199,22 @@ class ChirpCan {
                 this.pendingMessage = false; 
             };
             this.websocket.send("nodes: "+JSON.stringify(message));
+
+
+            console.log("[ChirpCan] message sent. awaiting response");
         }
+
+        // if the queue isn't empty & we don't already have an interval, set an interval to be recalled at
         if (this.messageQueue.size > 0 && this.messageIntervalId == null) {
             this.messageIntervalId = setInterval(() => {this.#processMessageQueue()}, 100);
         }
         
 
         this.processingMessageQueue = false;
-
-        //console.log("#processMessageQueue: paused");
     }
 
     close() {
-        console.log("closing connection... (might show an error after)");
+        console.log("[ChirpCan] closing connection... (might show an error after)");
         this.websocket.close();
     }
 }

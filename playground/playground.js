@@ -89,6 +89,7 @@ class Playground {
 
 // init stuff
 var chirpCans = [];
+const inspector = new Inspector("itarget-title", "itarget-desc");
 
 
 /**
@@ -99,8 +100,8 @@ function start() {
 }
 
 /**
- * Stop the given ChirpCan's communications, or all chirpcans
- * @param {number} index 
+ * Stops the given ChirpCan's communications, or all ChirpCans
+ * @param {number} index (Optional) Index of the ChirpCan to stop
  */
 function stop(index = null) {
     if (index == null) {
@@ -111,6 +112,9 @@ function stop(index = null) {
     else chirpCans[index].close();
 }
 
+/**
+ * Toggles whether the config is accepting manual or file input.
+ */
 function toggleInputMode() {
     switch (Playground.inputMode) {
         case InputMode.MANUAL:
@@ -122,3 +126,34 @@ function toggleInputMode() {
     }
     $( '.config-input-mode' ).toggle(); 
 }
+
+function loadInspectorData() {
+    const e = document.getElementsByClassName("inspector-data");
+    /** Bunch of loop variables. */
+    let title, pages;
+    let tmpBundle;
+
+    // loop thru html collection and add shit
+    for (let i = 0; i < e.length; i++) {
+        // inspecting bundle i
+        // String: bundle title
+        title = e[i].getElementsByClassName("inspectable-bundle-title")[0].value;
+
+        // Create bundle i
+        tmpBundle = new InspectorInfoBundle(title);
+
+        // HTML Collection of pages
+        pages = e[i].getElementsByClassName("inspector-page");
+
+        for (let j = 0; j < pages.length; j++) {
+            // inspecting each page (j) of bundle i: push 
+            tmpBundle.pushPage(pages[j].getElementsByClassName("inspectable-title")[0].value, pages[j].getElementsByClassName("inspectable-desc")[0].value);
+        }
+
+        // all pages added
+        inspector.addToLibrary(tmpBundle); // save contents of tmpBundle
+        tmpBundle = null; // discard this reference to tmpBundle
+    }
+}
+
+loadInspectorData();
