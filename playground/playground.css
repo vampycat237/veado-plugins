@@ -3,7 +3,7 @@
     text-align: center;
 }
 
-#playground {
+#playground, .card-centered {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -38,6 +38,10 @@
         top: -0.75rem;
     }
 
+    .border-badge.left {
+        left: -0.75rem;
+    }
+
     .border-badge > i {
         --outline-weight: 2px;
         --outline-color: var(--link);
@@ -47,4 +51,55 @@
 /* These elements are only there for the code to read, and later display to the user!*/
 .inspector-data, .inspectable-bundle-title, .inspectable-title, .inspectable-desc {
     display: none;
+}
+
+.inspector-container {
+    flex-basis: 25%
+}
+
+.page-controls {
+    position: absolute;
+    top: 1.4rem;
+    left: 0rem;
+    right: 0rem;
+    justify-content: space-between;
+}
+    .page-controls > * {
+        position: absolute;
+        width: 0.9em;
+    }
+
+    .page-controls > :first-child {
+        right: 100%;
+        text-align: left;
+    }
+
+    .page-controls > :last-child {
+        left: 100%;
+        text-align: right;
+    }
+
+@media screen and (max-width: 768px) {
+    .inspector-container {
+        display: none;
+
+        position: absolute;
+        flex-basis: auto;
+        z-index: 10;
+        top: 8rem; /*leaves enough room for toggle button to be visible*/
+    }
+
+    #content {
+        width: auto;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    /* Stretches on hover */
+    .hover-stretch {
+        transition: width var(--transition);
+    }
+    .hover-stretch:hover {
+        width: 1.5em;
+    }
 }

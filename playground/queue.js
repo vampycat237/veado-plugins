@@ -1,5 +1,5 @@
 /**
- * Linked list style node
+ * Single-direction, linked list style node.
  */
 class QueueItem {
     /**
@@ -8,7 +8,12 @@ class QueueItem {
      * @param {QueueItem} next opt
      */
     constructor(data) {
+        /** Data this QueueItem is holding.*/
         this.data = data;
+        /**
+         * Reference to the next QueueItem.
+         * @type {QueueItem}
+         */
         this.next = null;
     }
 
@@ -18,28 +23,29 @@ class QueueItem {
 }
 
 /**
- * Fuck it writing my own data structure implementations again.
- * Single-direction queue. First in First out as queues should be. Loosely based on Java Queue interface.
+ * Single-direction queue. First in, first out, as queues should be. Loosely based on the Java Queue interface.
+ * Didn't like JS's data structure options so I made my own. Made for ChirpCan but probably useful for other things too!
  */
 class Queue {
     /**
-     * The first guy in line, as it were. Retrieved by peek and such.
+     * The first guy in line, as it were. Retrieved by poll.
+     * @type {QueueItem}
      */
-    head;
+    #head;
 
     /**
-     * The last guy in line. Used when adding to queue
+     * The last guy in line. Used when adding to queue.
+     * @type {QueueItem}
      */
-    tail;
+    #tail;
 
-    /**
-     * Length of the current queue.
-     */
+    /** Length of the current queue. */
     size;
 
+    /** Creates a new empty Queue. */
     constructor() {
-        this.head = null;
-        this.tail = null;
+        this.#head = null;
+        this.#tail = null;
         this.size = 0;
     }
 
@@ -53,15 +59,15 @@ class Queue {
 
         if (this.isEmpty()) { // size == 0: newItem should be the head now
             this.head = newItem;
-            this.tail = this.head;
+            this.#tail = this.#head;
         }
         else if (this.size == 1) { // size == 1: newItem should be the head's .next
-            this.head.next = newItem;
-            this.tail = this.head.next;
+            this.#head.next = newItem;
+            this.#tail = this.#head.next;
         }
         else {
-            this.tail.next = newItem;
-            this.tail = this.tail.next;
+            this.#tail.next = newItem;
+            this.#tail = this.#tail.next;
         }
 
         this.size++;
@@ -76,8 +82,8 @@ class Queue {
         //console.log("Queue's previous head: "+this.head.toString());
         if (this.isEmpty()) return null;
         else {
-            const oldHead = this.head;
-            this.head = this.head.next;
+            const oldHead = this.#head;
+            this.head = this.#head.next;
 
             this.size--;
 
@@ -86,9 +92,10 @@ class Queue {
         }
     }
 
+    /** True if the queue is empty. */
     isEmpty() {
         if (this.size == 0) return true;
-        else if (this.head == null) {
+        else if (this.#head == null) {
             console.warn("Queue: Size is not 0, but head is null. This might cause issues. Queue object logged below");
             console.log(this);
             return false;

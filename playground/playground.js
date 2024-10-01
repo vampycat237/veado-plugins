@@ -1,3 +1,6 @@
+// Main script for the playground. Interfaces with all the other scripts.
+
+/** Enum type thing used to index Playground.inputs.*/
 const InputMode = {
     MANUAL : "manual",
     FILE : "file"
@@ -28,27 +31,24 @@ class Playground {
         
     }
 
-    static containers = {
-        states : document.getElementById("states-target")
-    }
-
-    static controls = {
-        connect : document.getElementById("connect"),
-        disconnect : document.getElementById("disconnect")
+    static outputs = {
+        states: $("#states-target"),
+        connect : $("#connect"),
+        disconnect : $("#disconnect")
     }
 
     static controlsOn() {
-        connect.style.display = "none";
-        disconnect.style.display = "inline-block";
+        this.outputs.connect.hide();
+        this.outputs.disconnect.show();
 
-        states.style.display = "flex";
+        this.outputs.states.show();
     }
 
     static controlsOff() {
-        connect.style.display = "inline-block";
-        disconnect.style.display = "none";
+        this.outputs.connect.show();
+        this.outputs.disconnect.hide();
 
-        states.style.display = "none";
+        this.outputs.states.hide();
     }
 
     /**
@@ -84,23 +84,35 @@ class Playground {
                 return;
         }
     }
+
+    static insertState(veadoState) {
+        this.outputs.states.insertAdjacentHTML("beforeend", veadoState.toHTML());
+    }
+
+    static clearStates() {
+        this.outputs.states.innerHTML = '';
+    }
 }
 
 
 // init stuff
 var chirpCans = [];
-const inspector = new Inspector("itarget-title", "itarget-desc");
+/** @type {Inspector} */
+var inspector;
 
 
 /**
  * Starts listening to Veadotube!
+ * Opens a new ChirpCan based on playground inputs.
  */
 function start() {
     chirpCans[chirpCans.length] = Playground.parseInputs();
+    Playground.controlsOn();
 }
 
 /**
- * Stops the given ChirpCan's communications, or all ChirpCans
+ * Stops all ChirpCans, or just the given ChirpCan if index is provided.
+ * TODO: Multi-ChirpCan support. Requires HTML updates tho
  * @param {number} index (Optional) Index of the ChirpCan to stop
  */
 function stop(index = null) {
@@ -108,8 +120,13 @@ function stop(index = null) {
         for (var i = 0; i < chirpCans.length; i++) {
             chirpCans[i].close();
         }
+        Playground.controlsOff();
     }
     else chirpCans[index].close();
+
+    // Clean up
+    Playground.controlsOff();
+    Playground.clearStates();
 }
 
 /**
@@ -128,6 +145,8 @@ function toggleInputMode() {
 }
 
 function loadInspectorData() {
+    inspector = new Inspector("itarget-title", "itarget-desc");
+
     const e = document.getElementsByClassName("inspector-data");
     /** Bunch of loop variables. */
     let title, pages;
@@ -154,6 +173,10 @@ function loadInspectorData() {
         inspector.addToLibrary(tmpBundle); // save contents of tmpBundle
         tmpBundle = null; // discard this reference to tmpBundle
     }
+
+    // all pages are loaded? cool! let's display the inspector page.
+    inspector.loadInfo('inspector', true);
 }
 
-loadInspectorData();
+// Once the page is all ready, then we'll load the inspector stuff! <3
+window.addEventListener('load', () => { loadInspectorData() });

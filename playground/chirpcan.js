@@ -1,7 +1,11 @@
 /**
- * Stores the info of a single message prompt from this end.
+ * A single message to be sent by a ChirpCan.
  */
 class Chirp {
+    /**
+     * Creates a Chirp - a message to be sent by a ChirpCan.
+     * @param {String} message 
+     */
     constructor(message, sender, callback) {
         this.message = message;
         this.sender = sender;
@@ -26,14 +30,24 @@ class Chirp {
 
 /**
  * Talk to Veadotube... but in JS! Because, surely, people want to do that... Right?
+ * (Name is a play on BleatCan.)
  */
 class ChirpCan {
 
-    static msg = {
+    /**
+     * Holds messages we might want to send to Veadotube.
+     */
+    static messagePrompts = {
+        /**
+         * Request the list of nodes (connection targets) the Veado API is offering.
+         */
         requestNodeList : {
             event: "list"
         },
 
+        /**
+         * Request the list of states from the 'mini' node.
+         */
         requestStateList: {
             event: "payload",
             type: "stateEvents",
@@ -43,10 +57,14 @@ class ChirpCan {
 
     }
 
-    states = []
+    /** If true, ChirpCan and related classes will log more info to console. */
+    static verbose = true;
+
+    states = [];
 
     /**
-     * Track bleats we want to send.
+     * Track messages (Chirps) we want to send.
+     * @type {Queue}
      */
     messageQueue = new Queue();
     /**
@@ -60,7 +78,7 @@ class ChirpCan {
     messageIntervalId = null;
 
 
-    // Gets config info from HTML and starts communication with the websocket server
+    /** Gets config info from HTML and starts communication with the websocket server */
     constructor(server, windowTitle, index) {
         this.server = server;
         this.windowTitle = windowTitle;
@@ -72,13 +90,25 @@ class ChirpCan {
         this.openSocket();
     }
 
-    /**
-     * Identifies type & what instance is being listened to.
-     */
-    toString() {
-        return `ChirpCan for server ${this.server}`;
+    // STATIC METHODS
+    /** Parses a JSON message from Veadotube.*/
+    static parseMessage(event) {
+        return JSON.parse(event.data.slice(6, event.data.indexOf('}}') + 2));
     }
 
+    /** The default callback when recieving a message. */
+    static recieveMessage(event, sender) {
+        const msg = ChirpCan.parseMessage(event);
+
+        for (var i = 0; i < msg.payload.states.length; i++) {
+            //console.log(msg.payload.states[i]);
+            sender.states.push(new VeadoState(msg.payload.states[i], sender));
+        }
+    }
+
+    // INSTANCE METHODS
+
+    /** Opens a websocket to connect to Veadotube. */
     openSocket() {
         this.websocket = new WebSocket("ws://" + this.server + "?n=" + this.windowTitle);
 
@@ -88,9 +118,6 @@ class ChirpCan {
 
             // request state list - initializes state list
             this.requestStateList();
-
-            // update controls display
-            Playground.controlsOn();
         };
         this.websocket.onmessage = (event) => { console.log(event); };
         this.websocket.onclose = (event) => { 
@@ -98,15 +125,14 @@ class ChirpCan {
             this.logSocketStatus(); 
 
             // remove references to all states from the former connection
-            Playground.containers.states.innerHTML = ""; // TODO: We'll want to move states into here probably
             delete this.states;
 
-            // update controls display
-            // TODO: might need to be changed for multi-connection support
             Playground.controlsOff();
+            Playground.clearStates();
         };
     }
 
+    /** Logs the status of the websocket to console. */
     logSocketStatus() {
         switch (this.websocket.readyState) {
             case 0:
@@ -123,27 +149,16 @@ class ChirpCan {
         }
     }
 
-    // request the state list from mini
+    /** Requests the state list from mini. */
     requestStateList() {
-        this.bleat(ChirpCan.msg.requestStateList, this);
-    }
-
-    static parseMessage(event) {
-        return JSON.parse(event.data.slice(6, event.data.indexOf('}}') + 2));
-    }
-
-    // default recieve message callback
-    static recieveMessage(event, sender) {
-        const msg = ChirpCan.parseMessage(event);
-
-        for (var i = 0; i < msg.payload.states.length; i++) {
-            //console.log(msg.payload.states[i]);
-            sender.states.push(new VeadoState(msg.payload.states[i], sender));
-        }
+        this.bleat(ChirpCan.messagePrompts.requestStateList, this);
     }
 
     /**
      * Sends a message to veadotube!
+     * More accurately, wraps a message up in a little bow, adds it to this ChirpCan's
+     * message queue, and politely asks ChirpCan to send it to Veadotube.
+     * 
      * @param {Object} message JSON to stringify and send to veadotube.
      * @param {Number} sender a reference to the object requesting something, so the callback doesn't get lost.
      * @param {Function} callback optional, function/method to invoke when event occurs
@@ -156,8 +171,7 @@ class ChirpCan {
     }
 
     /**
-     * Private helper method that actually sends messages to veado, in-order. god.
-     * 
+     * Private method that actually sends messages to veado, in-order, without losing anything. god.
      * Ensures that it can only be running ONCE so it's safe to call it multiple times.
      */
     #processMessageQueue() {
@@ -180,7 +194,7 @@ class ChirpCan {
 
         // begin looping the message queue
         if (!this.pendingMessage) {
-            console.log("[ChirpCan] recieved response, processing next message in queue...");
+            if (verbose) console.log("[ChirpCan] recieved response, processing next message in queue...");
 
             clearInterval(this.messageIntervalId);
             this.messageIntervalId = null;
@@ -191,7 +205,7 @@ class ChirpCan {
             const sender = chirp.sender;
             const message = chirp.message;
 
-            console.log("[ChirpCan] processing"+chirp.toString());
+            if (verbose) console.log("[ChirpCan] processing"+chirp.toString());
 
         
             this.websocket.onmessage = (event) => {
@@ -201,7 +215,7 @@ class ChirpCan {
             this.websocket.send("nodes: "+JSON.stringify(message));
 
 
-            console.log("[ChirpCan] message sent. awaiting response");
+            if (verbose) console.log("[ChirpCan] message sent. awaiting response");
         }
 
         // if the queue isn't empty & we don't already have an interval, set an interval to be recalled at
@@ -213,8 +227,17 @@ class ChirpCan {
         this.processingMessageQueue = false;
     }
 
+    /** Closes connection to Veadotube. */
     close() {
         console.log("[ChirpCan] closing connection... (might show an error after)");
         this.websocket.close();
+    }
+
+    /** 
+     * Returns a string representation of this ChirpCan.
+     * Identifies self as a ChirpCan & states what instance is being listened to. 
+     */
+    toString() {
+        return `ChirpCan for server ${this.server}`;
     }
 }

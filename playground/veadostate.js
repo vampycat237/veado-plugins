@@ -3,6 +3,11 @@
  * Construct by simply passing it id and name from JSON
  */
 class VeadoState {
+    /**
+     * Creates a VeadoState object based on a payload.
+     * @param {JSON} payload A state payload from Veadotube.
+     * @param {ChirpCan} chirpCan The ChirpCan in charge of this VeadoState.
+     */
     constructor(payload, chirpCan) {
         // remember parent
         this.chirpCan = chirpCan;
@@ -33,6 +38,7 @@ class VeadoState {
         return `VeadoState ${this.name} (id ${this.id})`;
     }
 
+    /** Requests the state thumbnail from veadotube via its ChirpCan. */
     requestThumbnail() {
         this.chirpCan.bleat(this.msg.requestThumbnail, this, VeadoState.thumbnailCallback);
     }
@@ -75,8 +81,9 @@ class VeadoState {
 
     /**
      * Creates an HTML element representing this object.
+     * TODO: Make ChirpCan and/or Playground handle this.
      */
     actualizeHTML() {
-        Playground.containers.states.insertAdjacentHTML("beforeend", this.toHTML());
+        Playground.insertState(this); 
     }
 }
